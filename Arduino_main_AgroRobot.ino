@@ -346,33 +346,23 @@ void dataFirebase() {
   if (Firebase.ready() && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0))
   {
     sendDataPrevMillis = millis();
-    Serial.printf("Set Nito... %s\n", Firebase.setFloat(fbdo, F("/data/nito"), nito) ? "ok" : fbdo.errorReason().c_str());
-    Serial.printf("Get Nito... %s\n", Firebase.getFloat(fbdo, F("/data/nito")) ? String(fbdo.to<float>()).c_str() : fbdo.errorReason().c_str());
+    
+    Firebase.setTimestamp(fbdo, "/timestamp");
+    if (fbdo.httpCode() == FIREBASE_ERROR_HTTP_CODE_OK)
+    {
+      String timestamp = String(fbdo.to<int>());
+      String nitoPath = "/data/"+timestamp+"/n";
+      String kaliPath = "/data/"+timestamp+"/k";
+      String photphoPath = "/data/"+timestamp+"/p";
+      Serial.printf("Set Nito... %s\n", Firebase.setFloat(fbdo, nitoPath, nito) ? "ok" : fbdo.errorReason().c_str());
+      Serial.printf("Get Nito... %s\n", Firebase.getFloat(fbdo, nitoPath) ? String(fbdo.to<float>()).c_str() : fbdo.errorReason().c_str());
 
-    Serial.printf("Set Photpho... %s\n", Firebase.setDouble(fbdo, F("/data/photpho"), photpho) ? "ok" : fbdo.errorReason().c_str());
-    Serial.printf("Get Photpho... %s\n", Firebase.getDouble(fbdo, F("/data/photpho")) ? String(fbdo.to<double>()).c_str() : fbdo.errorReason().c_str());
+      Serial.printf("Set Photpho... %s\n", Firebase.setFloat(fbdo, photphoPath, photpho) ? "ok" : fbdo.errorReason().c_str());
+      Serial.printf("Get Photpho... %s\n", Firebase.getFloat(fbdo, photphoPath) ? String(fbdo.to<float>()).c_str() : fbdo.errorReason().c_str());
 
-    Serial.printf("Set Kali... %s\n", Firebase.setDouble(fbdo, F("/data/kali"), kali) ? "ok" : fbdo.errorReason().c_str());
-    Serial.printf("Get Kali... %s\n", Firebase.getDouble(fbdo, F("/data/kali")) ? String(fbdo.to<double>()).c_str() : fbdo.errorReason().c_str());
-
-
-//    //khai báo json
-//    FirebaseJson json;
-//
-//    if (count == 0)
-//    {
-//      json.set("value/round/" + String(count), F("cool!"));
-//      json.set(F("vaue/ts/.sv"), F("timestamp"));
-//      Serial.printf("Set json... %s\n", Firebase.set(fbdo, F("/data"), json) ? "ok" : fbdo.errorReason().c_str());
-//    }
-//    else
-//    {
-//      json.add(String(count), "smart!");
-//      Serial.printf("Update node... %s\n", Firebase.updateNode(fbdo, F("/data/value/round"), json) ? "ok" : fbdo.errorReason().c_str());
-//    }
-//
-//    Serial.println();
-
+      Serial.printf("Set Kali... %s\n", Firebase.setFloat(fbdo, kaliPath, kali) ? "ok" : fbdo.errorReason().c_str());
+      Serial.printf("Get Kali... %s\n", Firebase.getFloat(fbdo, kaliPath) ? String(fbdo.to<float>()).c_str() : fbdo.errorReason().c_str());
+    }
     count++;
   }
 }
